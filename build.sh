@@ -25,21 +25,15 @@ if ! docker buildx version &> /dev/null; then
     exit 1
 fi
 
-# Build both images
-echo "Building qotd_8ball image..."
+# Build image
+echo "Building qotd_server image..."
 echo "Registry: $REGISTRY"
-docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --target qotd_8ball -t $REGISTRY:latest -t $REGISTRY:8ball-${VERSION} -t $REGISTRY:8ball-latest .
-
-echo "Building qotd_fortune_cowsay image..."
-docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --target qotd_fortune_cowsay -t $REGISTRY:fortune-cowsay-${VERSION} -t $REGISTRY:fortune-cowsay-latest .
+docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --target qotd_server -t $REGISTRY:latest -t $REGISTRY:${VERSION} -t $REGISTRY:latest .
 
 # Push all tags to registry
 echo "Pushing all images to registry..."
 docker push $REGISTRY:latest
-docker push $REGISTRY:8ball-${VERSION}
-docker push $REGISTRY:8ball-latest
-docker push $REGISTRY:fortune-cowsay-${VERSION}
-docker push $REGISTRY:fortune-cowsay-latest
+docker push $REGISTRY:${VERSION}
 
 echo "All images built and pushed successfully!"
 echo "Registry: $REGISTRY"

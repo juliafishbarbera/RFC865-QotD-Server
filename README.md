@@ -4,7 +4,7 @@ Run a [Quote of the Day Protocol](https://datatracker.ietf.org/doc/html/rfc865) 
 
 Note that the application and Dockerfile expect to run on port 17, which will require admin privileges to access a privileged port.
 
-One target is for a simple 8ball-style fortune, and the other is a `fortune | cowsay` output.
+Provides a `fortune | cowsay` output server.
 
 ## Quickstart
 
@@ -23,29 +23,22 @@ See https://hub.docker.com/repository/docker/jkingsman/qotd-appliance/general.
 Build and run directly with
 
 ```bash
-# 8ball version
-docker build --target qotd_8ball -t qotd_8ball .
-
-# cowsay fortune version
-docker build --target qotd_fortune_cowsay -t qotd_fortune_cowsay .
+# server version
+docker build --target qotd_fortune_cowsay -t qotd_server .
 ```
 
 ### Docker Execution
 
 ```bash
-sudo docker run -p 17:17/tcp -p 17:17/udp --name qotd_8ball_container qotd_8ball
-sudo docker run -p 17:17/tcp -p 17:17/udp --name qotd_fortune_cowsay_container qotd_fortune_cowsay
+sudo docker run -p 17:17/tcp -p 17:17/udp --name qotd_server_container qotd_server
 ```
 
 ## Local
 ### Local Compilation
 
 ```bash
-# 8ball version
+# server version
 gcc -o qotd_server qotd_server.c
-
-# cowsay fortune version
-gcc -o qotd_server qotd_server_cowsay_fortune.c
 ```
 
 if you're feeling aggressive.

@@ -13,26 +13,8 @@
       in
       {
         packages = {
-          qotd-8ball = pkgs.stdenv.mkDerivation {
-            pname = "qotd-8ball";
-            version = "1.0.0";
-            src = ./.;
-            
-            buildInputs = [ ];
-            nativeBuildInputs = [ pkgs.gcc ];
-            
-            buildPhase = ''
-              gcc -o qotd-8ball qotd_8ball.c
-            '';
-            
-            installPhase = ''
-              mkdir -p $out/bin
-              cp qotd-8ball $out/bin/
-            '';
-          };
-
-          qotd-fortune-cowsay = pkgs.stdenv.mkDerivation {
-            pname = "qotd-fortune-cowsay";
+          qotd-server = pkgs.stdenv.mkDerivation {
+            pname = "qotd-server";
             version = "1.0.0";
             src = ./.;
             
@@ -40,12 +22,12 @@
             nativeBuildInputs = [ pkgs.gcc ];
             
             buildPhase = ''
-              gcc -o qotd-fortune-cowsay qotd_fortune.c
+              gcc -o qotd-server qotd_server.c
             '';
             
             installPhase = ''
               mkdir -p $out/bin
-              cp qotd-fortune-cowsay $out/bin/
+              cp qotd-server $out/bin/
             '';
           };
         };
