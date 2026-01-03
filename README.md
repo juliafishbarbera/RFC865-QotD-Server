@@ -18,6 +18,8 @@ Needs sudo to bind to privileged port.
 sudo docker run -p 17:17/tcp -p 17:17/udp jkingsman/qotd-appliance:latest
 ```
 
+Note: The server defaults to both TCP and UDP protocols when QOTD_NET is not set.
+
 See https://hub.docker.com/repository/docker/jkingsman/qotd-appliance/general.
 
 ## Docker
@@ -34,10 +36,9 @@ docker build --target qotd_server -t qotd_server .
 ### Docker Execution
 
 ```bash
-# Default: 8ball mode with both TCP and UDP
+# Default: 8ball mode with both TCP and UDP (QOTD_NET optional)
 sudo docker run -p 17:17/tcp -p 17:17/udp \
   -e QOTD_MODE=8ball \
-  -e QOTD_NET=tcp_udp \
   --name qotd_server_container qotd_server
 
 # Custom command mode - fortune | cowsay (TCP only)
@@ -65,6 +66,7 @@ make
 ```
 
 Or compile manually:
+
 ```bash
 gcc -o qotd_server main.c quotes.c network.c config.c
 ```
@@ -72,8 +74,8 @@ gcc -o qotd_server main.c quotes.c network.c config.c
 ## Local Execution
 
 ```bash
-# Default: 8ball mode with both TCP and UDP
-QOTD_NET=tcp_udp sudo ./qotd_server
+# Default: 8ball mode with both TCP and UDP (QOTD_NET optional)
+sudo ./qotd_server
 
 # File mode with TCP only
 QOTD_MODE=file QOTD_NET=tcp QUOTES_FILE=./quotes.txt sudo ./qotd_server
@@ -85,10 +87,9 @@ QOTD_MODE=command QOTD_NET=udp sudo ./qotd_server
 ## Configuration
 
 When the server starts, it will display a message indicating which network protocols are enabled:
-- `QOTD server started on port 17 (TCP and UDP)` - Both protocols enabled
+- `QOTD server started on port 17 (TCP and UDP)` - Both protocols enabled (default when QOTD_NET unset)
 - `QOTD server started on port 17 (TCP only)` - Only TCP enabled
 - `QOTD server started on port 17 (UDP only)` - Only UDP enabled
-- `QOTD server started on port 17 (no protocols)` - No protocols enabled (QOTD_NET unset)
 
 ### Environment Variables
 
@@ -97,15 +98,15 @@ When the server starts, it will display a message indicating which network proto
   - `command`: Use `fortune | cowsay`
   - `file`: Use custom quotes file
 - `QUOTES_FILE`: Path to quotes file (used only when `QOTD_MODE=file`)
-- `QOTD_NET`: Network protocol selection (required)
-  - `tcp_udp` or `udp_tcp`: Enable both TCP and UDP (default behavior)
+- `QOTD_NET`: Network protocol selection (optional)
+  - `tcp_udp` or `udp_tcp`: Enable both TCP and UDP
   - `tcp`: Enable TCP only
   - `udp`: Enable UDP only
-  - If unset, the server will disable all network protocols
+  - If unset, defaults to both TCP and UDP enabled
 
 ### Quote File Format
 
-The quotes file should contain one quote per line, newline-separated. Example:
+The quotes file should contain one quote per line, newline-separated.
 
 ## Interaction
 

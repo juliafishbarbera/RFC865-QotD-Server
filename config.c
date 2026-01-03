@@ -35,9 +35,9 @@ void init_server_config() {
       udp_en = 0;
     }
   } else {
-    tcp_en = 0;
-    udp_en = 0;
-    printf("[%ld] QOTD_NET unset! Disabling network.\n", time(NULL));
+    tcp_en = 1;
+    udp_en = 1;
+    printf("[%ld] QOTD_NET unset! Defaulting to TCP and UDP.\n", time(NULL));
   }
 
   // Load file quotes if in file mode

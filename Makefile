@@ -24,13 +24,13 @@ clean:
 
 # Run targets (requires sudo for privileged port)
 run: qotd_server
-	sudo env QOTD_NET=tcp_udp ./qotd_server
+	sudo ./qotd_server
 
 # Test targets
 test: qotd_server
 	@echo "Testing server variant..."
 	@echo "Starting server in background..."
-	sudo env QOTD_NET=tcp_udp ./qotd_server &
+	sudo ./qotd_server &
 	@sleep 1
 	@echo "TCP test:"
 	@nc localhost 17
