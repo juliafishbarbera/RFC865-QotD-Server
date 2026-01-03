@@ -1,0 +1,60 @@
+/**
+ * Server configuration functions for QOTD Server
+ * MIT License (c) 2025 Jack Kingsman <jack@jackkingsman.me>
+ */
+
+#include "qotd.h"
+
+void init_server_config() {
+  // Get mode from environment variable
+  const char *mode_env = getenv("QOTD_MODE");
+  if (mode_env) {
+    if (strcmp(mode_env, "file") == 0) {
+      server_mode = 'f';
+    } else if (strcmp(mode_env, "8ball") == 0) {
+      server_mode = '8';
+    } else if (strcmp(mode_env, "command") == 0) {
+      server_mode = 'c';
+    }
+  }
+
+  const char *net_env = getenv("QOTD_NET");
+  if (net_env) {
+    if (strcmp(net_env, "udp_tcp") == 0) {
+      udp_en = 1;
+      tcp_en = 1;
+    } else if (strcmp(net_env, "tcp_udp") == 0) {
+      udp_en = 1;
+      tcp_en = 1;
+    } else if (strcmp(net_env, "tcp") == 0) {
+      tcp_en = 1;
+    } else if (strcmp(net_env, "udp") == 0) {
+      udp_en = 1;
+    } else {
+      tcp_en = 0;
+      udp_en = 0;
+    }
+  } else {
+    tcp_en = 0;
+    udp_en = 0;
+    printf("[%ld] QOTD_NET unset! Disabling network.\n", time(NULL));
+  }
+
+  // Load file quotes if in file mode
+  if (server_mode == 'f') {
+    const char *quotes_file_env = getenv("QUOTES_FILE");
+    const char *quotes_file = quotes_file_env ? quotes_file_env : QUOTES_FILE;
+
+    printf("[%ld] Loading quotes from: %s\n", time(NULL), quotes_file);
+    file_quotes = read_file(quotes_file, &file_quote_count);
+
+    if (file_quotes) {
+      printf("[%ld] Loaded %d quotes from file\n", time(NULL),
+             file_quote_count);
+    } else {
+      printf("[%ld] Failed to load quotes file, falling back to 8ball mode\n",
+             time(NULL));
+      server_mode = '8';
+    }
+  }
+}

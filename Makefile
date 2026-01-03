@@ -8,14 +8,15 @@ LDFLAGS =
 TARGETS = qotd_server
 
 # Source files
-QOTD_SERVER_SRC = qotd_server.c
+SOURCES = main.c quotes.c network.c config.c
+HEADERS = qotd.h
 
 # Default target
 all: $(TARGETS)
 
 # Server variant
-qotd_server: $(QOTD_SERVER_SRC)
-	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+qotd_server: $(SOURCES) $(HEADERS)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES) $(LDFLAGS)
 
 # Clean build artifacts
 clean:
@@ -23,13 +24,13 @@ clean:
 
 # Run targets (requires sudo for privileged port)
 run: qotd_server
-	sudo ./qotd_server
+	sudo env QOTD_NET=tcp_udp ./qotd_server
 
 # Test targets
 test: qotd_server
 	@echo "Testing server variant..."
 	@echo "Starting server in background..."
-	sudo ./qotd_server &
+	sudo env QOTD_NET=tcp_udp ./qotd_server &
 	@sleep 1
 	@echo "TCP test:"
 	@nc localhost 17

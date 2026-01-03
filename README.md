@@ -28,32 +28,30 @@ Build and run directly with
 
 ```bash
 # server version
-docker build --target qotd_fortune_cowsay -t qotd_server .
+docker build --target qotd_server -t qotd_server .
 ```
 
 ### Docker Execution
 
 ```bash
-# Default: 8ball mode
+# Default: 8ball mode with both TCP and UDP
 sudo docker run -p 17:17/tcp -p 17:17/udp \
   -e QOTD_MODE=8ball \
+  -e QOTD_NET=tcp_udp \
   --name qotd_server_container qotd_server
 
-# Custom command mode - fortune | cowsay
-sudo docker run -p 17:17/tcp -p 17:17/udp \
--e QOTD_MODE=command \
---name qotd_server_container qotd_server
+# Custom command mode - fortune | cowsay (TCP only)
+sudo docker run -p 17:17/tcp \
+  -e QOTD_MODE=command \
+  -e QOTD_NET=tcp \
+  --name qotd_server_container qotd_server
 
-# Custom quotes file mode
-sudo docker run -p 17:17/tcp -p 17:17/udp \
+# Custom quotes file mode (UDP only)
+sudo docker run -p 17:17/udp \
   -v /path/to/your/quotes.txt:/quotes/custom.txt \
   -e QOTD_MODE=file \
   -e QUOTES_FILE=/quotes/custom.txt \
-  --name qotd_server_container qotd_server
-
-# Default: 8ball mode
-sudo docker run -p 17:17/tcp -p 17:17/udp \
-  -e QOTD_MODE=8ball \
+  -e QOTD_NET=udp \
   --name qotd_server_container qotd_server
 ```
 
@@ -63,25 +61,34 @@ sudo docker run -p 17:17/tcp -p 17:17/udp \
 
 ```bash
 # server version
-gcc -o qotd_server qotd_server.c
+make
 ```
 
-if you're feeling aggressive.
+Or compile manually:
+```bash
+gcc -o qotd_server main.c quotes.c network.c config.c
+```
 
 ## Local Execution
 
 ```bash
-# Default: 8ball mode
-sudo ./qotd_server
+# Default: 8ball mode with both TCP and UDP
+QOTD_NET=tcp_udp sudo ./qotd_server
 
-# File mode
-QOTD_MODE=file QUOTES_FILE=./quotes.txt sudo ./qotd_server
+# File mode with TCP only
+QOTD_MODE=file QOTD_NET=tcp QUOTES_FILE=./quotes.txt sudo ./qotd_server
 
-# Command mode (fortune | cowsay)
-QOTD_MODE=command sudo ./qotd_server
+# Command mode with UDP only
+QOTD_MODE=command QOTD_NET=udp sudo ./qotd_server
 ```
 
 ## Configuration
+
+When the server starts, it will display a message indicating which network protocols are enabled:
+- `QOTD server started on port 17 (TCP and UDP)` - Both protocols enabled
+- `QOTD server started on port 17 (TCP only)` - Only TCP enabled
+- `QOTD server started on port 17 (UDP only)` - Only UDP enabled
+- `QOTD server started on port 17 (no protocols)` - No protocols enabled (QOTD_NET unset)
 
 ### Environment Variables
 
@@ -90,6 +97,11 @@ QOTD_MODE=command sudo ./qotd_server
   - `command`: Use `fortune | cowsay`
   - `file`: Use custom quotes file
 - `QUOTES_FILE`: Path to quotes file (used only when `QOTD_MODE=file`)
+- `QOTD_NET`: Network protocol selection (required)
+  - `tcp_udp` or `udp_tcp`: Enable both TCP and UDP (default behavior)
+  - `tcp`: Enable TCP only
+  - `udp`: Enable UDP only
+  - If unset, the server will disable all network protocols
 
 ### Quote File Format
 
