@@ -1,1 +1,11 @@
+# Built binaries
 qotd_server
+qotd-8ball
+qotd-fortune-cowsay
+
+# Nix build artifacts
+result
+result-*
+
+# Build lock file (optional - keep if you want reproducible builds)
+# flake.lock
