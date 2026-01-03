@@ -1,5 +1,5 @@
 /**
- * QOTD Server with Dynamic Command Execution
+ * QOTD Server with Fortune and Cowsay
  * Implements RFC 865 on TCP/UDP port 17
  * MIT License (c) 2025 Jack Kingsman <jack@jackkingsman.me>
  */

@@ -1,5 +1,5 @@
 /**
- * High Performance QOTD Server with Magic 8-Ball Fortunes in Cowsay
+ * QOTD Server with Magic 8-Ball Fortunes
  * Implements RFC 865 on TCP/UDP port 17
  * MIT License (c) 2025 Jack Kingsman <jack@jackkingsman.me>
  */

@@ -6,11 +6,11 @@ CFLAGS = -Wall -Wextra -O2
 LDFLAGS = 
 
 # Targets
-TARGETS = qotd-8ball qotd-fortune-cowsay
+TARGETS = qotd-8ball qotd-fortune
 
 # Source files
-QOTD_8BALL_SRC = qotd_server.c
-QOTD_FORTUNE_COWSAY_SRC = qotd_server_cowsay_fortune.c
+QOTD_8BALL_SRC = qotd_8ball.c
+QOTD_FORTUNE_COWSAY_SRC = qotd_fortune.c
 
 # Default target
 all: $(TARGETS)
@@ -20,7 +20,7 @@ qotd-8ball: $(QOTD_8BALL_SRC)
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 # Fortune-cowsay variant
-qotd-fortune-cowsay: $(QOTD_FORTUNE_COWSAY_SRC)
+qotd-fortune: $(QOTD_FORTUNE_COWSAY_SRC)
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 # Clean build artifacts
@@ -30,19 +30,19 @@ clean:
 # Install targets (requires sudo for port 17)
 install: $(TARGETS)
 	sudo cp qotd-8ball /usr/local/bin/
-	sudo cp qotd-fortune-cowsay /usr/local/bin/
+	sudo cp qotd-fortune /usr/local/bin/
 
 # Uninstall targets
 uninstall:
 	sudo rm -f /usr/local/bin/qotd-8ball
-	sudo rm -f /usr/local/bin/qotd-fortune-cowsay
+	sudo rm -f /usr/local/bin/qotd-fortune
 
 # Run targets (requires sudo for privileged port)
 run-8ball: qotd-8ball
 	sudo ./qotd-8ball
 
-run-fortune: qotd-fortune-cowsay
-	sudo ./qotd-fortune-cowsay
+run-fortune: qotd-fortune
+	sudo ./qotd-fortune
 
 # Test targets
 test-8ball: qotd-8ball
@@ -59,10 +59,10 @@ test-8ball: qotd-8ball
 	@echo "Stopping server..."
 	sudo pkill -f qotd-8ball
 
-test-fortune: qotd-fortune-cowsay
+test-fortune: qotd-fortune
 	@echo "Testing fortune-cowsay variant..."
 	@echo "Starting server in background..."
-	sudo ./qotd-fortune-cowsay &
+	sudo ./qotd-fortune &
 	@sleep 1
 	@echo "TCP test:"
 	@nc localhost 17
@@ -71,20 +71,15 @@ test-fortune: qotd-fortune-cowsay
 	@echo "" | nc -u localhost 17
 	@echo ""
 	@echo "Stopping server..."
-	sudo pkill -f qotd-fortune-cowsay
+	sudo pkill -f qotd-fortune
 
 # Help target
 help:
 	@echo "Available targets:"
 	@echo "  all                    - Build both variants"
 	@echo "  qotd-8ball            - Build 8ball variant"
-	@echo "  qotd-fortune-cowsay   - Build fortune-cowsay variant"
-	@echo "  clean                 - Remove build artifacts"
-	@echo "  install               - Install to /usr/local/bin (requires sudo)"
-	@echo "  uninstall             - Remove from /usr/local/bin (requires sudo)"
-	@echo "  run-8ball             - Run 8ball variant (requires sudo)"
+	@echo "  qotd-fortune          - Build fortune-cowsay variant"
 	@echo "  run-fortune           - Run fortune-cowsay variant (requires sudo)"
-	@echo "  test-8ball            - Test 8ball variant (requires sudo)"
 	@echo "  test-fortune          - Test fortune-cowsay variant (requires sudo)"
 	@echo "  help                  - Show this help"
 

@@ -22,7 +22,7 @@
             nativeBuildInputs = [ pkgs.gcc ];
             
             buildPhase = ''
-              gcc -o qotd-8ball qotd_server.c
+              gcc -o qotd-8ball qotd_8ball.c
             '';
             
             installPhase = ''
@@ -40,7 +40,7 @@
             nativeBuildInputs = [ pkgs.gcc ];
             
             buildPhase = ''
-              gcc -o qotd-fortune-cowsay qotd_server_cowsay_fortune.c
+              gcc -o qotd-fortune-cowsay qotd_fortune.c
             '';
             
             installPhase = ''
