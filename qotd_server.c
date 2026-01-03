@@ -23,6 +23,8 @@
 #define QUOTE_COMMAND "fortune | cowsay"
 #define NUM_FORTUNES 20
 #define MODE '8'
+#define QUOTES_FILE "./quotes.txt"
+#define MAX_QUOTES 64
 
 const char *fortunes[NUM_FORTUNES] = {"It is certain.",
                                       "It is decidedly so.",
@@ -48,13 +50,66 @@ const char *fortunes[NUM_FORTUNES] = {"It is certain.",
 int tcp_socket = -1;
 int udp_socket = -1;
 
+// Global variables for file quotes
+char **file_quotes = NULL;
+int file_quote_count = 0;
+char server_mode = '8'; // Default to 8 ball mode
+
+// Function declarations
+char **read_file(const char *filename, int *count);
+void init_server_config();
+
 void handle_signal(int sig) {
+  (void)sig; // Suppress unused parameter warning
   printf("[%ld] Shutting down QOTD server...\n", time(NULL));
   if (tcp_socket >= 0)
     close(tcp_socket);
   if (udp_socket >= 0)
     close(udp_socket);
+
+  // Free file quotes memory
+  if (file_quotes) {
+    for (int i = 0; i < file_quote_count; i++) {
+      if (file_quotes[i]) {
+        free(file_quotes[i]);
+      }
+    }
+    free(file_quotes);
+  }
+
   exit(EXIT_SUCCESS);
+}
+
+void init_server_config() {
+  // Get mode from environment variable
+  const char *mode_env = getenv("QOTD_MODE");
+  if (mode_env) {
+    if (strcmp(mode_env, "file") == 0) {
+      server_mode = 'f';
+    } else if (strcmp(mode_env, "8ball") == 0) {
+      server_mode = '8';
+    } else if (strcmp(mode_env, "command") == 0) {
+      server_mode = 'c';
+    }
+  }
+
+  // Load file quotes if in file mode
+  if (server_mode == 'f') {
+    const char *quotes_file_env = getenv("QUOTES_FILE");
+    const char *quotes_file = quotes_file_env ? quotes_file_env : QUOTES_FILE;
+
+    printf("[%ld] Loading quotes from: %s\n", time(NULL), quotes_file);
+    file_quotes = read_file(quotes_file, &file_quote_count);
+
+    if (file_quotes) {
+      printf("[%ld] Loaded %d quotes from file\n", time(NULL),
+             file_quote_count);
+    } else {
+      printf("[%ld] Failed to load quotes file, falling back to 8ball mode\n",
+             time(NULL));
+      server_mode = '8';
+    }
+  }
 }
 
 char *get_fortune(char *buffer, size_t buffer_size) {
@@ -86,12 +141,76 @@ char *get_command_output(char *buffer, size_t buffer_size) {
   return buffer;
 }
 
+char **read_file(const char *filename, int *count) {
+  FILE *fquotes;
+
+  fquotes = fopen(filename, "r");
+  if (fquotes == NULL) {
+    printf("Unable to open quotes file: %s\n", filename);
+    return NULL;
+  }
+
+  int num_quotes = 0;
+  char buffer[MAX_BUFFER_SIZE];
+
+  // First pass: count lines
+  while (fgets(buffer, sizeof(buffer), fquotes)) {
+    num_quotes++;
+  }
+
+  if (num_quotes == 0) {
+    fclose(fquotes);
+    printf("No quotes found in file\n");
+    return NULL;
+  }
+
+  char **quotes = malloc(num_quotes * sizeof(char *));
+  if (!quotes) {
+    fclose(fquotes);
+    return NULL;
+  }
+
+  rewind(fquotes);
+  int i = 0;
+  while (fgets(buffer, sizeof(buffer), fquotes) && i < num_quotes) {
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+      buffer[len - 1] = '\0';
+    }
+
+    quotes[i] = malloc(strlen(buffer) + 1);
+    if (quotes[i]) {
+      strcpy(quotes[i], buffer);
+      i++;
+    }
+  }
+
+  fclose(fquotes);
+  *count = i;
+  return quotes;
+}
+
+char *get_file_quote(char *buffer, size_t buffer_size, char **quotes,
+                     int num_quotes) {
+  if (!quotes || num_quotes <= 0) {
+    snprintf(buffer, buffer_size, "Error: No quotes available\n");
+    return buffer;
+  }
+
+  int quote_index = rand() % num_quotes;
+  const char *quote = quotes[quote_index];
+  snprintf(buffer, buffer_size, "%s", quote);
+  return buffer;
+}
+
 char *get_quote(char *buffer, size_t buffer_size, char mode) {
   switch (mode) {
   case 'c':
     return get_command_output(buffer, buffer_size);
   case '8':
     return get_fortune(buffer, buffer_size);
+  case 'f':
+    return get_file_quote(buffer, buffer_size, file_quotes, file_quote_count);
   default:
     return get_fortune(buffer, buffer_size);
   }
@@ -106,6 +225,9 @@ int main() {
 
   signal(SIGINT, handle_signal);
   signal(SIGTERM, handle_signal);
+
+  // Initialize server configuration
+  init_server_config();
 
   // wear your socks
   if ((tcp_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -165,7 +287,6 @@ int main() {
 
   printf("[%ld] QOTD server started on port %d (TCP and UDP)\n", time(NULL),
          QOTD_PORT);
-  printf("[%ld] Using command: %s\n", time(NULL), QUOTE_COMMAND);
 
   // main loop
   while (1) {
@@ -197,7 +318,7 @@ int main() {
                ntohs(client_addr.sin_port));
 
         // send quote
-        get_quote(quote_buffer, sizeof(quote_buffer), MODE);
+        get_quote(quote_buffer, sizeof(quote_buffer), server_mode);
         send(client_fd, quote_buffer, strlen(quote_buffer), 0);
         close(client_fd);
       } else if (errno != EAGAIN && errno != EWOULDBLOCK) {
@@ -222,7 +343,7 @@ int main() {
                ntohs(client_addr.sin_port));
 
         // send quote
-        get_quote(quote_buffer, sizeof(quote_buffer), MODE);
+        get_quote(quote_buffer, sizeof(quote_buffer), server_mode);
         sendto(udp_socket, quote_buffer, strlen(quote_buffer), 0,
                (struct sockaddr *)&client_addr, client_len);
       } else if (errno != EAGAIN && errno != EWOULDBLOCK) {
