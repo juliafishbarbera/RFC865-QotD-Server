@@ -12,7 +12,7 @@ fi
 
 # Set the version and optional registry from command line arguments
 VERSION="$1"
-REGISTRY="${2:-jkingsman/qotd-appliance}"
+REGISTRY="${2:-juliabarbera/rfc865-qotd-server}"
 
 # Check dependencies
 if ! command -v docker &> /dev/null; then
@@ -28,12 +28,11 @@ fi
 # Build image
 echo "Building qotd_server image..."
 echo "Registry: $REGISTRY"
-docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --target qotd_server -t $REGISTRY:latest -t $REGISTRY:${VERSION} -t $REGISTRY:latest .
+docker buildx build --platform linux/arm64,linux/amd64 --target qotd_server -t $REGISTRY:latest -t $REGISTRY:${VERSION} --push .
 
-# Push all tags to registry
-echo "Pushing all images to registry..."
-docker push $REGISTRY:latest
-docker push $REGISTRY:${VERSION}
+# Also build local image for current platform
+echo "Building local image for current platform..."
+docker build -t ${REGISTRY}:local .
 
 echo "All images built and pushed successfully!"
 echo "Registry: $REGISTRY"
