@@ -24,6 +24,33 @@ See https://hub.docker.com/repository/docker/jkingsman/qotd-appliance/general.
 
 ## Docker
 
+### Docker Compose
+
+Create a `docker-compose.yml` file with the following configuration:
+
+```yaml
+services:
+  qotd:
+    image: juliabarbera/rfc865-qotd-server
+    restart: unless-stopped
+    ports:
+      - 17:17/tcp
+      - 17:17/udp
+    environment:
+      - QOTD_MODE=8ball
+      - QOTD_NET=tcp_udp
+      - QUOTES_FILE=/quotes/custom.txt
+    volumes:
+      - ./quotes.txt:/quotes/custom.txt:ro
+networks: {}
+```
+
+Then run:
+
+```bash
+sudo docker-compose up -d
+```
+
 ### Docker Compilation
 
 Build and run directly with
