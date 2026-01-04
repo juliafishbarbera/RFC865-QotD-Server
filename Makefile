@@ -8,8 +8,8 @@ LDFLAGS =
 TARGETS = qotd_server
 
 # Source files
-SOURCES = main.c quotes.c network.c config.c
-HEADERS = qotd.h
+SOURCES = src/main.c src/quotes.c src/network.c src/config.c
+HEADERS = src/qotd.h
 
 # Default target
 all: $(TARGETS)

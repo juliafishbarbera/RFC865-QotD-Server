@@ -18,11 +18,12 @@
             version = "1.0.0";
             src = ./.;
             
-            buildInputs = [ pkgs.fortune pkgs.cowsay ];
+            buildInputs = [ pkgs.fortune pkgs.cowsay pkgs.docker ];
             nativeBuildInputs = [ pkgs.gcc ];
             
             buildPhase = ''
-              gcc -o qotd-server qotd_server.c
+              cd src
+              gcc -o qotd-server *.c
             '';
             
             installPhase = ''
@@ -33,7 +34,7 @@
         };
 
         devShells.default = pkgs.mkShell {
-          buildInputs = [ pkgs.gcc pkgs.fortune pkgs.cowsay ];
+          buildInputs = [ pkgs.gcc pkgs.fortune pkgs.cowsay pkgs.docker ];
         };
       });
 }
