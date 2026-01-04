@@ -4,18 +4,11 @@ FROM alpine:3.19 AS builder
 RUN apk add --no-cache gcc musl-dev
 WORKDIR /app
 
-COPY src/*.c src/*.h .
+COPY src/ .
 
-RUN gcc -O3 -static -o qotd_server src/main.c src/quotes.c src/network.c src/config.c
-
-
+RUN gcc -O3 -static -o qotd_server main.c quotes.c network.c config.c
 
 FROM alpine:3.19 AS qotd_server
-
-RUN apk update && \
-    apk add --no-cache \
-    cowsay@testing \
-    fortune@community
 
 # Create directory for quotes
 RUN mkdir -p /quotes
