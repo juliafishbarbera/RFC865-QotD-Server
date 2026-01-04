@@ -1,6 +1,6 @@
 /**
  * Server configuration functions for QOTD Server
- * MIT License (c) 2025 Jack Kingsman <jack@jackkingsman.me>
+ * MIT License (c) 2026 Julia Barbera <julia@fishcat.fish>
  */
 
 #include "qotd.h"

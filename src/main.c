@@ -1,7 +1,7 @@
 /**
  * QOTD Server
  * Implements RFC 865 on TCP/UDP port 17
- * MIT License (c) 2025 Jack Kingsman <jack@jackkingsman.me>
+ * MIT License (c)  2026 Julia Barbera <julia@fishcat.fish>
  */
 
 #include "qotd.h"

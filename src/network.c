@@ -1,6 +1,7 @@
 /**
  * Network server functions for QOTD Server
- * MIT License (c) 2025 Jack Kingsman <jack@jackkingsman.me>
+ * MIT License (c) 2026 Jack Kingsman <jack@jackkingsman.me>
+ * MIT License (c) 2026 Julia Barbera <julia@fishcat.fish>
  */
 
 #include "qotd.h"
@@ -82,7 +83,8 @@ void handle_tcp_connection() {
   socklen_t client_len = sizeof(client_addr);
   char quote_buffer[MAX_BUFFER_SIZE];
 
-  int client_fd = accept(tcp_socket, (struct sockaddr *)&client_addr, &client_len);
+  int client_fd =
+      accept(tcp_socket, (struct sockaddr *)&client_addr, &client_len);
   if (client_fd >= 0) {
     char client_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
