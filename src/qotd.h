@@ -23,7 +23,6 @@
 #define QOTD_PORT 17
 #define BACKLOG 10
 #define MAX_BUFFER_SIZE 512
-#define QUOTE_COMMAND "fortune | cowsay"
 #define NUM_FORTUNES 20
 #define MODE '8'
 #define QUOTES_FILE "./quotes.txt"
@@ -36,6 +35,7 @@ extern int file_quote_count;
 extern char server_mode;
 extern int tcp_en;
 extern int udp_en;
+extern char *quote_command;
 
 extern const char *fortunes[NUM_FORTUNES];
 

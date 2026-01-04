@@ -14,6 +14,7 @@ int file_quote_count = 0;
 char server_mode = '8';
 int tcp_en = 0;
 int udp_en = 0;
+char *quote_command = NULL;
 
 void handle_signal(int sig) {
   (void)sig;
@@ -55,7 +56,8 @@ int main() {
   // Setup UDP server
   if (udp_en) {
     if (setup_udp_server() < 0) {
-      if (tcp_en) close(tcp_socket);
+      if (tcp_en)
+        close(tcp_socket);
       exit(EXIT_FAILURE);
     }
   }
@@ -70,7 +72,14 @@ int main() {
   } else {
     printf("no protocols");
   }
-  printf(")\n");
+  printf(") in ");
+  if (server_mode == '8') {
+    printf("8 ball");
+  } else if (server_mode == 'f') {
+    printf("file");
+  } else {
+    printf("command");
+  }
 
   // Main loop
   while (1) {
@@ -82,8 +91,10 @@ int main() {
       FD_SET(udp_socket, &read_fds);
 
     int max_fd = -1;
-  if (tcp_en && tcp_socket > max_fd) max_fd = tcp_socket;
-  if (udp_en && udp_socket > max_fd) max_fd = udp_socket;
+    if (tcp_en && tcp_socket > max_fd)
+      max_fd = tcp_socket;
+    if (udp_en && udp_socket > max_fd)
+      max_fd = udp_socket;
 
     if (max_fd >= 0 && select(max_fd + 1, &read_fds, NULL, NULL, NULL) < 0) {
       if (errno == EINTR)

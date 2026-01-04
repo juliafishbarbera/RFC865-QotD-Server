@@ -34,7 +34,7 @@ char *get_fortune(char *buffer, size_t buffer_size) {
 }
 
 char *get_command_output(char *buffer, size_t buffer_size) {
-  FILE *pipe = popen(QUOTE_COMMAND, "r");
+  FILE *pipe = popen(quote_command, "r");
   if (!pipe) {
     snprintf(buffer, buffer_size, "Error: Command execution failed\n");
     return buffer;

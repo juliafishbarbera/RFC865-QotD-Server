@@ -40,6 +40,13 @@ void init_server_config() {
     printf("[%ld] QOTD_NET unset! Defaulting to TCP and UDP.\n", time(NULL));
   }
 
+  char *qotd_command = getenv("QOTD_COMMAND");
+  if (qotd_command) {
+    quote_command = qotd_command;
+  } else {
+    quote_command = "echo \"I didn't set a quote command!\"";
+  }
+
   // Load file quotes if in file mode
   if (server_mode == 'f') {
     const char *quotes_file_env = getenv("QUOTES_FILE");
