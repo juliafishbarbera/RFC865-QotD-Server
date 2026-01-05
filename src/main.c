@@ -15,6 +15,8 @@ char server_mode = '8';
 int tcp_en = 0;
 int udp_en = 0;
 char *quote_command = NULL;
+char *prefix = NULL;
+char *suffix = NULL;
 
 void handle_signal(int sig) {
   (void)sig;
@@ -80,6 +82,7 @@ int main() {
   } else {
     printf("command");
   }
+  printf("mode\n");
 
   // Main loop
   while (1) {

@@ -117,14 +117,27 @@ char *get_file_quote(char *buffer, size_t buffer_size, char **quotes,
 }
 
 char *get_quote(char *buffer, size_t buffer_size, char mode) {
+  char temp_buffer[MAX_BUFFER_SIZE];
+  char *quote;
+
   switch (mode) {
   case 'c':
-    return get_command_output(buffer, buffer_size);
+    quote = get_command_output(temp_buffer, sizeof(temp_buffer));
+    break;
   case '8':
-    return get_fortune(buffer, buffer_size);
+    quote = get_fortune(temp_buffer, sizeof(temp_buffer));
+    break;
   case 'f':
-    return get_file_quote(buffer, buffer_size, file_quotes, file_quote_count);
+    quote = get_file_quote(temp_buffer, sizeof(temp_buffer), file_quotes,
+                           file_quote_count);
+    break;
   default:
-    return get_fortune(buffer, buffer_size);
+    quote = get_fortune(temp_buffer, sizeof(temp_buffer));
+    break;
   }
+
+  const char *safe_prefix = prefix ? prefix : "";
+  const char *safe_suffix = suffix ? suffix : "";
+  snprintf(buffer, buffer_size, "%s%s%s", safe_prefix, quote, safe_suffix);
+  return buffer;
 }

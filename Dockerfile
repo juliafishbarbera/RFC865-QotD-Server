@@ -18,7 +18,9 @@ COPY quotes.txt /quotes/quotes.txt
 
 # Set default environment variables
 ENV QOTD_MODE="8ball"
-ENV QUOTES_FILE="/quotes/quotes.txt"
+ENV QOTD_FILE="/quotes/quotes.txt"
+ENV QOTD_PREFIX="prefixprefix"
+ENV QOTD_SUFFIX="suffixsuffix"
 
 COPY --from=builder /app/qotd_server /qotd_server
 EXPOSE 17/tcp 17/udp

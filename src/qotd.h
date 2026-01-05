@@ -36,6 +36,8 @@ extern char server_mode;
 extern int tcp_en;
 extern int udp_en;
 extern char *quote_command;
+extern char *prefix;
+extern char *suffix;
 
 extern const char *fortunes[NUM_FORTUNES];
 

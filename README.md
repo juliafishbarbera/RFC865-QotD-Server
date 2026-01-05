@@ -4,6 +4,9 @@ Run a [Quote of the Day Protocol](https://datatracker.ietf.org/doc/html/rfc865)
 server, with a Dockerfile to set it up containerized. Now you can finally use
 DHCP option 8!
 
+This project was originally based on
+[Jack Kingsman's implementation](https://github.com/jkingsman/RFC865-QotD-Server-for-Docker).
+
 Note that the application and Dockerfile expect to run on port 17, which will
 require admin privileges to access a privileged port.
 
@@ -15,12 +18,13 @@ fortunes, or custom quotes from a file.
 Needs sudo to bind to privileged port.
 
 ```bash
-sudo docker run -p 17:17/tcp -p 17:17/udp jkingsman/qotd-appliance:latest
+sudo docker run -p 17:17/tcp -p 17:17/udp juliabarbera/rfc865-qotd-server:latest
 ```
 
-Note: The server defaults to both TCP and UDP protocols when QOTD_NET is not set.
+Note: The server defaults to both TCP and UDP protocols when QOTD_NET is not
+set.
 
-See https://hub.docker.com/repository/docker/jkingsman/qotd-appliance/general.
+See https://hub.docker.com/r/juliabarbera/rfc865-qotd-server
 
 ## Docker
 
@@ -113,12 +117,17 @@ QOTD_MODE=command QOTD_NET=udp sudo ./qotd_server
 
 ## Configuration
 
-When the server starts, it will display a message indicating which network protocols are enabled:
-- `QOTD server started on port 17 (TCP and UDP)` - Both protocols enabled (default when QOTD_NET unset)
+When the server starts, it will display a message indicating which network
+protocols are enabled:
+
+- `QOTD server started on port 17 (TCP and UDP)` - Both protocols enabled
+  (default when QOTD_NET unset)
 - `QOTD server started on port 17 (TCP only)` - Only TCP enabled
 - `QOTD server started on port 17 (UDP only)` - Only UDP enabled
 
 ### Environment Variables
+
+#### Basic Configuration
 
 - `QOTD_MODE`: Quote source mode
   - `8ball` (default): Use built-in 8ball fortunes
@@ -130,6 +139,10 @@ When the server starts, it will display a message indicating which network proto
   - `tcp`: Enable TCP only
   - `udp`: Enable UDP only
   - If unset, defaults to both TCP and UDP enabled
+- `QOTD_PREFIX` `QOTD_SUFFIX`: Adds a prefix or suffix to the served quote
+  (optional)
+- `QOTD_COMMAND`: Command to source quote from (used only when
+  `QOTD_MODE=command`)
 
 ### Quote File Format
 
@@ -145,8 +158,10 @@ nc localhost 17
 echo "" | nc -u localhost 17
 ```
 
+```
 ## License
 
-MIT License, Copyright (c) 2026 Jack Kingsman <jack@jackkingsman.me>
+MIT License, Copyright (c) 2026 Julia Barbera <julia@fishcat.fish>
 
 See `LICENSE.md` for full text.
+```
