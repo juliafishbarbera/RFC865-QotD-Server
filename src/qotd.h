@@ -27,6 +27,9 @@
 #define MODE '8'
 #define QUOTES_FILE "./quotes.txt"
 #define MAX_QUOTES 64
+#define TABLE_SIZE 1024
+#define TOKENS_PER_SEC 20
+#define BURST_SIZE 40
 
 extern int tcp_socket;
 extern int udp_socket;
@@ -41,6 +44,14 @@ extern char *suffix;
 
 extern const char *fortunes[NUM_FORTUNES];
 
+typedef struct {
+  uint32_t ip;
+  uint32_t tokens;
+  uint64_t last_refill;
+} rate_entry_t;
+
+extern rate_entry_t rate_table[TABLE_SIZE];
+
 char **read_file(const char *filename, int *count);
 void init_server_config();
 void handle_signal(int sig);
@@ -53,5 +64,7 @@ int setup_tcp_server();
 int setup_udp_server();
 void handle_tcp_connection();
 void handle_udp_request();
+uint32_t ip_cast(char *ip_str);
+int rate_allow(uint32_t ip);
 
 #endif

@@ -8,7 +8,7 @@ LDFLAGS =
 TARGETS = qotd_server
 
 # Source files
-SOURCES = src/main.c src/quotes.c src/network.c src/config.c
+SOURCES = src/main.c src/quotes.c src/network.c src/config.c src/rate_limit.c
 HEADERS = src/qotd.h
 
 # Default target

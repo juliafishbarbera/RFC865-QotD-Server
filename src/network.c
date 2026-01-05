@@ -78,6 +78,16 @@ int setup_udp_server() {
   return 0;
 }
 
+uint32_t ip_cast(char *str_ip) {
+  uint32_t int_ip;
+  if (inet_pton(AF_INET, str_ip, &int_ip) <= 0) {
+    printf("Junk IP: %s\n", str_ip);
+    return 0;
+  }
+  printf("Good IP: %s to %u\n", str_ip, int_ip);
+  return int_ip;
+}
+
 void handle_tcp_connection() {
   struct sockaddr_in client_addr;
   socklen_t client_len = sizeof(client_addr);
@@ -87,6 +97,8 @@ void handle_tcp_connection() {
       accept(tcp_socket, (struct sockaddr *)&client_addr, &client_len);
   if (client_fd >= 0) {
     char client_ip[INET_ADDRSTRLEN];
+    if (!rate_allow(ip_cast(client_ip)))
+      return;
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
     printf("[%ld] TCP connection from %s:%d\n", time(NULL), client_ip,
            ntohs(client_addr.sin_port));
