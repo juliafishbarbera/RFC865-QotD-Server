@@ -97,9 +97,13 @@ void handle_tcp_connection() {
       accept(tcp_socket, (struct sockaddr *)&client_addr, &client_len);
   if (client_fd >= 0) {
     char client_ip[INET_ADDRSTRLEN];
-    if (!rate_allow(ip_cast(client_ip)))
-      return;
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
+    if (!rate_allow(ip_cast(client_ip))) {
+      printf("[%ld] TCP rate limited for %s:%d\n", time(NULL), client_ip,
+             ntohs(client_addr.sin_port));
+      close(client_fd);
+      return;
+    }
     printf("[%ld] TCP connection from %s:%d\n", time(NULL), client_ip,
            ntohs(client_addr.sin_port));
 
@@ -124,6 +128,14 @@ void handle_udp_request() {
   if (recv_size >= 0) {
     char client_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
+
+    // Check rate limiting
+    if (!rate_allow(ip_cast(client_ip))) {
+      printf("[%ld] UDP rate limited for %s:%d\n", time(NULL), client_ip,
+             ntohs(client_addr.sin_port));
+      return;
+    }
+
     printf("[%ld] UDP datagram from %s:%d\n", time(NULL), client_ip,
            ntohs(client_addr.sin_port));
 

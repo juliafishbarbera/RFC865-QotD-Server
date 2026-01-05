@@ -28,8 +28,8 @@
 #define QUOTES_FILE "./quotes.txt"
 #define MAX_QUOTES 64
 #define TABLE_SIZE 1024
-#define TOKENS_PER_SEC 20
-#define BURST_SIZE 40
+#define TOKENS_PER_SEC 1
+#define BURST_SIZE 1
 
 extern int tcp_socket;
 extern int udp_socket;

@@ -48,6 +48,9 @@ int main() {
   // Initialize server configuration
   init_server_config();
 
+  // Initialize rate limiting table
+  memset(rate_table, 0, sizeof(rate_table));
+
   // Setup TCP server
   if (tcp_en) {
     if (setup_tcp_server() < 0) {
