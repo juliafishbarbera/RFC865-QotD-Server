@@ -28,8 +28,6 @@
 #define QUOTES_FILE "./quotes.txt"
 #define MAX_QUOTES 64
 #define TABLE_SIZE 1024
-#define TOKENS_PER_SEC 1
-#define BURST_SIZE 1
 
 extern int tcp_socket;
 extern int udp_socket;
@@ -38,9 +36,11 @@ extern int file_quote_count;
 extern char server_mode;
 extern int tcp_en;
 extern int udp_en;
-extern char *quote_command;
-extern char *prefix;
-extern char *suffix;
+extern const char *quote_command;
+extern const char *prefix;
+extern const char *suffix;
+extern int tokens_per_second;
+extern int burst_size;
 
 extern const char *fortunes[NUM_FORTUNES];
 

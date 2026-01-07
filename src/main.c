@@ -14,9 +14,11 @@ int file_quote_count = 0;
 char server_mode = '8';
 int tcp_en = 0;
 int udp_en = 0;
-char *quote_command = NULL;
-char *prefix = NULL;
-char *suffix = NULL;
+const char *quote_command = NULL;
+const char *prefix = NULL;
+const char *suffix = NULL;
+int tokens_per_second = 16;
+int burst_size = 64;
 
 void handle_signal(int sig) {
   (void)sig;

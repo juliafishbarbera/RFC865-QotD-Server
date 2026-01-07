@@ -143,6 +143,8 @@ protocols are enabled:
   (optional)
 - `QOTD_COMMAND`: Command to source quote from (used only when
   `QOTD_MODE=command`)
+- `QOTD_RATE`: Max requests per second per ip
+- `QOTD_BURST`: Max rate limiting burst size
 
 ### Quote File Format
 

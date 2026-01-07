@@ -40,20 +40,36 @@ void init_server_config() {
     printf("[%ld] QOTD_NET unset! Defaulting to TCP and UDP.\n", time(NULL));
   }
 
-  char *qotd_prefix = getenv("QOTD_PREFIX");
+  const char *qotd_prefix = getenv("QOTD_PREFIX");
   if (qotd_prefix) {
     prefix = qotd_prefix;
   }
-  char *qotd_suffix = getenv("QOTD_SUFFIX");
+  const char *qotd_suffix = getenv("QOTD_SUFFIX");
   if (qotd_suffix) {
     suffix = qotd_suffix;
   }
 
-  char *qotd_command = getenv("QOTD_COMMAND");
+  const char *qotd_command = getenv("QOTD_COMMAND");
   if (qotd_command) {
     quote_command = qotd_command;
   } else {
     quote_command = "echo \"I didn't set a quote command!\"";
+  }
+
+  const char *qotd_rate = getenv("QOTD_RATE");
+  if (qotd_rate) {
+    int tps = atoi(qotd_rate);
+    if (tps < 1 || tps > 1024)
+      tps = 16;
+    tokens_per_second = tps;
+  }
+
+  const char *qotd_burst = getenv("QOTD_BURST");
+  if (qotd_burst) {
+    int burst = atoi(qotd_burst);
+    if (burst < 1 || burst > 2048)
+      burst = 64;
+    burst_size = burst;
   }
 
   // Load file quotes if in file mode

@@ -19,8 +19,11 @@ int rate_allow(uint32_t ip) {
   int allowed = 0;
 
   if (rate_table[hash].ip == ip) {
-    if ((current_time - rate_table[hash].last_refill) > 1000) {
-      rate_table[hash].tokens = BURST_SIZE;
+    uint64_t time_diff = current_time - rate_table[hash].last_refill;
+    if (time_diff > 1000) {
+      uint64_t seconds_passed = time_diff / 1000;
+      uint64_t tokens_to_add = seconds_passed * tokens_per_second;
+      rate_table[hash].tokens = (rate_table[hash].tokens + tokens_to_add > (uint64_t)burst_size) ? burst_size : rate_table[hash].tokens + tokens_to_add;
       rate_table[hash].last_refill = current_time;
     }
 
@@ -30,7 +33,7 @@ int rate_allow(uint32_t ip) {
     }
   } else {
     rate_table[hash].ip = ip;
-    rate_table[hash].tokens = BURST_SIZE - 1;
+    rate_table[hash].tokens = burst_size - 1;
     rate_table[hash].last_refill = current_time;
     allowed = 1;
   }
